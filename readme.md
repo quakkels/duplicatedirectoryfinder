@@ -6,3 +6,8 @@ I recommend using a Virtual Environment (venv) when running this project locally
 1. Clone this repository
 1. Activate your venv
 1. Execute `pip install -r requirements.txt`
+
+## Usage
+```
+> python duplicate_directory.py C:\path\to\directory\to\crawl
+```
