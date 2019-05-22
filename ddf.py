@@ -6,7 +6,6 @@ import os
 class DuplicateDirectoryFinder:
 
     start_directory = ""
-    directory_total = 0
     directory_hashes = []
     found_duplicates = []
 
@@ -14,24 +13,14 @@ class DuplicateDirectoryFinder:
         self.start_directory = start_directory
     
     def find_duplicates(self):
-        self.directory_total = self.__get_directory_total()
+        # self.directory_total = self.__get_directory_total()
         stuff = self.__traverse(self.start_directory)
-        self.__print_progress_bar(len(self.directory_hashes), self.directory_total, 
-            prefix="Crawling",
-            suffix="\t| " + str(len(self.directory_hashes)) +" of "+ str(self.directory_total) +" directories",
-            length=40)
+        print("")
         return stuff
-    
-    def __get_directory_total(self):
-        directories = [x[0] for x in os.walk(self.start_directory)]
-        return len(directories)
 
     def __traverse(self, directory):
-        self.__print_progress_bar(len(self.directory_hashes), self.directory_total, 
-            prefix="Crawling",
-            suffix="\t| " + str(len(self.directory_hashes)) +" of "+ str(self.directory_total) +" directories",
-            length=40)
-        
+        self.__print_progress_update(directory)
+
         files_count = 0
         directories_count = 0
         hash_me = ""
@@ -99,30 +88,12 @@ class DuplicateDirectoryFinder:
                     raise error
         return result
 
-    def __print_progress_bar(self, iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█'):
-        """
-        Call in a loop to create terminal progress bar
-        @params:
-            iteration   - Required  : current iteration (Int)
-            total       - Required  : total iterations (Int)
-            prefix      - Optional  : prefix string (Str)
-            suffix      - Optional  : suffix string (Str)
-            decimals    - Optional  : positive number of decimals in percent complete (Int)
-            length      - Optional  : character length of bar (Int)
-            fill        - Optional  : bar fill character (Str)
-        """
-
-        percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
-        filledLength = int(length * iteration // total)
-        bar = fill * filledLength + '-' * (length - filledLength)
-        print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = '\r')
-        # Print New Line on Complete
-        if iteration >= total: 
-            print("")
+    def __print_progress_update(self, current_directory):
+        print('\rCrawling: %s' % (current_directory), end = '\r')
 
 if __name__ == "__main__":
     start_directory = "C:\\Users\\quakkels\\Pictures"
-    start_directory = "C:\\Users\\quakkels\\books"
+    #start_directory = "C:\\Users\\quakkels\\books"
 
     ddf = DuplicateDirectoryFinder(start_directory)
 

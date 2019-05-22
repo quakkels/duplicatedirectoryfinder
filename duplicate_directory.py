@@ -52,8 +52,6 @@ for a in range (0, len(finder.directory_hashes)):
 # Save the file in the current directory
 wb.save('All Folder Hashes.xlsx')
 
-
-
 # Save just the duplicate files to another to Excel file
 wb = Workbook()
 ws = wb.active
