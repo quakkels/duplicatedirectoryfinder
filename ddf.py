@@ -63,13 +63,13 @@ class DuplicateDirectoryFinder:
         return hasher.hexdigest()
 
     def __get_sub_directories(self, directory):
-        return [os.path.join(directory, o) 
-            for o in os.listdir(directory) 
+        return [os.path.join(directory, o)
+            for o in os.listdir(directory)
                 if os.path.isdir(os.path.join(directory,o))]
 
     def __get_files(self, directory):
-        return [os.path.join(directory, o) 
-            for o in os.listdir(directory) 
+        return [os.path.join(directory, o)
+            for o in os.listdir(directory)
                 if os.path.isfile(os.path.join(directory,o))]
 
     def __retry_oserror(self, func, *args):
@@ -77,8 +77,9 @@ class DuplicateDirectoryFinder:
         for i in range(0, 10):
             try:
                 result = func(*args)
+                return result
                 break
-            except OSError as error:            
+            except OSError as error:
                 if i >= retry_count:
                     print("Unable to recover from OSError[", 
                     error.strerror, "] while using [", 
@@ -86,7 +87,8 @@ class DuplicateDirectoryFinder:
                     args, "] after [", 
                     retry_count, "] retry attempts.")
                     raise error
-        return result
+        
+        return []
 
     def __print_progress_update(self, current_directory):
         print('\rCrawling: %s' % (current_directory), end = '\r')
