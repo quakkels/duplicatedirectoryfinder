@@ -91,7 +91,7 @@ class DuplicateDirectoryFinder:
         return []
 
     def __print_progress_update(self, current_directory):
-        print('\rCrawling: %s' % (current_directory), end = '\r')
+        print('Crawling:', current_directory)
 
 if __name__ == "__main__":
     start_directory = "C:\\Users\\quakkels\\Pictures"
