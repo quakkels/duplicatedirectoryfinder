@@ -78,7 +78,6 @@ class DuplicateDirectoryFinder:
             try:
                 result = func(*args)
                 return result
-                break
             except OSError as error:
                 if i >= retry_count:
                     print("Unable to recover from OSError[", 

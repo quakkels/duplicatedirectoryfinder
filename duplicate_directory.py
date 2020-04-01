@@ -64,4 +64,6 @@ for a in range (0, len(finder.found_duplicates)):
 wb.save('Duplicate Folders.xlsx')
 
 print('Results saved as All Folder Hashes.xlsx and Duplicate Folders.xlsx')
+print('Total files and directories checked: ' + str(dir_count + file_count))
+print('Total potential duplicates identified: ' + str(len(finder.found_duplicates)))
 print()
