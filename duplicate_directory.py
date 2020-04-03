@@ -30,6 +30,9 @@ start = time.time()
 dir_count, file_count, nothing = finder.find_duplicates()
 end = time.time()
 
+# Create a unique string name for the time when the program finished
+end_string = time.strftime("%Y-%m-%d %H_%M_%S", time.gmtime(end))
+
 # Print the timestamps to the user
 print('The program ran for', (end - start),' seconds.')
 
@@ -42,28 +45,47 @@ ws = wb.active
 # Set up header info in Excel file
 ws['A1'] = 'Hash Value'
 ws['B1'] = 'Directory Name'
+ws['C1'] = 'Number of Subdirectories'
+ws['D1'] = 'Number of Files'
 
-# Loop through and save array
+
+# Loop through the list of hashes and save the four parts of the tuple
 for a in range (0, len(finder.directory_hashes)):
-    hash, dir_name =  finder.directory_hashes[a]
+    hash, dir_name, num_sub_dirs, num_files =  finder.directory_hashes[a]
     ws['A' + str(a + 2)] = hash
     ws['B' + str(a + 2)] = dir_name
+    ws['C' + str(a + 2)] = num_sub_dirs
+    ws['D' + str(a + 2)] = num_files
 
 # Save the file in the current directory
-wb.save('All Folder Hashes.xlsx')
+wb.save('Folder Hashes ' + end_string + '.xlsx')
 
 # Save just the duplicate files to another to Excel file
 wb = Workbook()
 ws = wb.active
 ws['A1'] = 'Directory 1'
 ws['B1'] = 'Directory 2'
-for a in range (0, len(finder.found_duplicates)):
-    hash, dir_name =  finder.found_duplicates[a]
-    ws['A' + str(a + 2)] = hash
-    ws['B' + str(a + 2)] = dir_name
-wb.save('Duplicate Folders.xlsx')
+ws['C1'] = 'Number of Subdirectories'
+ws['D1'] = 'Number of Files'
 
-print('Results saved as All Folder Hashes.xlsx and Duplicate Folders.xlsx')
-print('Total files and directories checked: ' + str(dir_count + file_count))
-print('Total potential duplicates identified: ' + str(len(finder.found_duplicates)))
+offset = 0
+for a in range (0, len(finder.found_duplicates)):
+    dir1, dir2, num_dirs, num_files =  finder.found_duplicates[a]
+    if num_files != 0:
+        ws['A' + str(a + 2 - offset)] = dir1
+        ws['B' + str(a + 2 - offset)] = dir2
+        ws['C' + str(a + 2 - offset)] = num_dirs
+        ws['D' + str(a + 2 - offset)] = num_files
+    else:
+        offset = offset + 1
+wb.save('Duplicate Folders ' + end_string + '.xlsx')
+
+print('Results saved as Folder Hashes ' + end_string + 
+      '.xlsx and Duplicate Folders ' + end_string + '.xlsx')
 print()
+junk = input('Press Enter to exit the program')
+
+
+
+
+
