@@ -42,9 +42,9 @@ class DuplicateDirectoryFinder:
         directory_hash = self.__hash_string(hash_me)
         duplicate = self.__find_duplicate(directory_hash)
         if duplicate is not None:
-            self.found_duplicates.append((duplicate, directory))
+            self.found_duplicates.append((duplicate, directory, directories_count, files_count))
 
-        self.directory_hashes.append((directory_hash, directory))
+        self.directory_hashes.append((directory_hash, directory, directories_count, files_count))
         return (
             directories_count, 
             files_count,
@@ -52,7 +52,7 @@ class DuplicateDirectoryFinder:
         )
     
     def __find_duplicate(self, hash):
-        for saved_hash, directory in self.directory_hashes:
+        for saved_hash, directory, dir_count, files_count in self.directory_hashes:
             if saved_hash == hash:
                 return directory
         return None
