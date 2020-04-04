@@ -23,36 +23,42 @@ class DuplicateDirectoryFinder:
 
         files_count = 0
         directories_count = 0
+        folder_size = 0
         hash_me = ""
         files = self.__retry_oserror(self.__get_files, directory)
         for file in files:
             files_count += 1
+            size = self.__retry_oserror(os.path.getsize, file)
+            folder_size += size
             hash_me += str(self.__retry_oserror(os.path.getmtime, file))
-            hash_me += str(self.__retry_oserror(os.path.getsize, file))
+            hash_me += str(size)
+            # hash_me += str(self.__retry_oserror(os.path.getsize, file))
 
         sub_directories = self.__retry_oserror(self.__get_sub_directories, directory)
         for sub_directory in sub_directories:
             directories_count += 1
-            (sub_directories_count, sub_files_count, hash
+            (sub_directories_count, sub_files_count, sub_folder_size, hash
                 ) = self.__traverse(sub_directory)
             directories_count += sub_directories_count
             files_count += sub_files_count
+            folder_size += sub_folder_size
             hash_me += str(hash)
 
         directory_hash = self.__hash_string(hash_me)
         duplicate = self.__find_duplicate(directory_hash)
         if duplicate is not None:
-            self.found_duplicates.append((duplicate, directory, directories_count, files_count))
+            self.found_duplicates.append((duplicate, directory, directories_count, files_count, folder_size))
 
-        self.directory_hashes.append((directory_hash, directory, directories_count, files_count))
+        self.directory_hashes.append((directory_hash, directory, directories_count, files_count, folder_size))
         return (
             directories_count, 
             files_count,
+            folder_size,
             directory_hash
         )
     
     def __find_duplicate(self, hash):
-        for saved_hash, directory, dir_count, files_count in self.directory_hashes:
+        for saved_hash, directory, dir_count, files_count, folder_size in self.directory_hashes:
             if saved_hash == hash:
                 return directory
         return None
@@ -63,26 +69,33 @@ class DuplicateDirectoryFinder:
         return hasher.hexdigest()
 
     def __get_sub_directories(self, directory):
-        return [os.path.join(directory, o)
-            for o in os.listdir(directory)
-                if os.path.isdir(os.path.join(directory,o))]
-
+        sub_dir_list = [] 
+        for o in os.listdir(directory): 
+            if os.path.isdir(directory):
+                sub_dir_list.append(os.path.join(directory,o))
+        return sub_dir_list
+#   Get feedback on why this doesn't work...
+#    def __get_files(self, directory):
+#        files_list = []
+#        for o in os.listdir(directory):
+#            if os.path.isfile(o):
+#                files_list.append(os.path.join(directory,o))
+#        return files_list
+#
     def __get_files(self, directory):
-        return [os.path.join(directory, o)
-            for o in os.listdir(directory)
-                if os.path.isfile(os.path.join(directory,o))]
+        return [os.path.join(directory, o) for o in os.listdir(directory) if os.path.isfile(os.path.join(directory,o))]
 
-    def __retry_oserror(self, func, *args):
+    def __retry_oserror(self, passed_func, *args):
         retry_count = 10
         for i in range(0, 10):
             try:
-                result = func(*args)
+                result = passed_func(*args)
                 return result
             except OSError as error:
                 if i >= retry_count:
                     print("Unable to recover from OSError[", 
                     error.strerror, "] while using [", 
-                    func, "] with [", 
+                    passed_func, "] with [", 
                     args, "] after [", 
                     retry_count, "] retry attempts.")
                     raise error
