@@ -69,33 +69,28 @@ class DuplicateDirectoryFinder:
         return hasher.hexdigest()
 
     def __get_sub_directories(self, directory):
-        sub_dir_list = [] 
+        sub_dirs = [] 
         for o in os.listdir(directory): 
             if os.path.isdir(directory):
-                sub_dir_list.append(os.path.join(directory,o))
-        return sub_dir_list
-#   Get feedback on why this doesn't work...
-#    def __get_files(self, directory):
-#        files_list = []
-#        for o in os.listdir(directory):
-#            if os.path.isfile(o):
-#                files_list.append(os.path.join(directory,o))
-#        return files_list
-#
-    def __get_files(self, directory):
-        return [os.path.join(directory, o) for o in os.listdir(directory) if os.path.isfile(os.path.join(directory,o))]
+                sub_dirs.append(os.path.join(directory,o))
+        return sub_dirs
 
-    def __retry_oserror(self, passed_func, *args):
+    def __get_files(self, directory):
+        return [os.path.join(directory, o) 
+            for o in os.listdir(directory) 
+                if os.path.isfile(os.path.join(directory,o))]
+
+    def __retry_oserror(self, func, *args):
         retry_count = 10
         for i in range(0, 10):
             try:
-                result = passed_func(*args)
+                result = func(*args)
                 return result
             except OSError as error:
                 if i >= retry_count:
                     print("Unable to recover from OSError[", 
                     error.strerror, "] while using [", 
-                    passed_func, "] with [", 
+                    func, "] with [", 
                     args, "] after [", 
                     retry_count, "] retry attempts.")
                     raise error
