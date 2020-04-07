@@ -27,7 +27,7 @@ finder = ddf.DuplicateDirectoryFinder(start_directory)
 
 # Set up the timestamps 
 start = time.time()
-dir_count, file_count, nothing = finder.find_duplicates()
+dir_count, file_count, folder_size, nothing = finder.find_duplicates()
 end = time.time()
 
 # Create a unique string name for the time when the program finished
@@ -47,15 +47,17 @@ ws['A1'] = 'Hash Value'
 ws['B1'] = 'Directory Name'
 ws['C1'] = 'Number of Subdirectories'
 ws['D1'] = 'Number of Files'
+ws['E1'] = 'Size of Directory'
 
 
 # Loop through the list of hashes and save the four parts of the tuple
 for a in range (0, len(finder.directory_hashes)):
-    hash, dir_name, num_sub_dirs, num_files =  finder.directory_hashes[a]
+    hash, dir_name, num_sub_dirs, num_files, dir_size =  finder.directory_hashes[a]
     ws['A' + str(a + 2)] = hash
     ws['B' + str(a + 2)] = dir_name
     ws['C' + str(a + 2)] = num_sub_dirs
     ws['D' + str(a + 2)] = num_files
+    ws['E' + str(a + 2)] = dir_size
 
 # Save the file in the current directory
 wb.save('Folder Hashes ' + end_string + '.xlsx')
@@ -67,15 +69,17 @@ ws['A1'] = 'Directory 1'
 ws['B1'] = 'Directory 2'
 ws['C1'] = 'Number of Subdirectories'
 ws['D1'] = 'Number of Files'
+ws['E1'] = 'Size of Directory'
 
 offset = 0
 for a in range (0, len(finder.found_duplicates)):
-    dir1, dir2, num_dirs, num_files =  finder.found_duplicates[a]
+    dir1, dir2, num_dirs, num_files, dir_size =  finder.found_duplicates[a]
     if num_files != 0:
         ws['A' + str(a + 2 - offset)] = dir1
         ws['B' + str(a + 2 - offset)] = dir2
         ws['C' + str(a + 2 - offset)] = num_dirs
         ws['D' + str(a + 2 - offset)] = num_files
+        ws['E' + str(a + 2 - offset)] = dir_size
     else:
         offset = offset + 1
 wb.save('Duplicate Folders ' + end_string + '.xlsx')
