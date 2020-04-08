@@ -125,3 +125,4 @@ dmypy.json
 # Project Specific Exclusions
 *.xlsx
 *.xls
+.vscode/

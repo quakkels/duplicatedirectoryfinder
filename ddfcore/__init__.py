@@ -106,4 +106,9 @@ if __name__ == "__main__":
     print(f"Files Count: {files_count}")
     print(f"Folder Size: {folder_size}")
     print(f"Directory Hash: {directory_hash}")
+
+    # todo: fix showing files as duplicate directories.
+    for item in ddf.found_duplicates:
+        print(item)
+
     end = time.time()
