@@ -1,7 +1,7 @@
-# Duplicate Directory Finder
 import hashlib
 import time
 import os
+import sys
 
 class DuplicateDirectoryFinder:
 
@@ -13,9 +13,7 @@ class DuplicateDirectoryFinder:
         self.start_directory = start_directory
     
     def find_duplicates(self):
-        # self.directory_total = self.__get_directory_total()
         stuff = self.__traverse(self.start_directory)
-        print("")
         return stuff
 
     def __traverse(self, directory):
@@ -32,7 +30,6 @@ class DuplicateDirectoryFinder:
             folder_size += size
             hash_me += str(self.__retry_oserror(os.path.getmtime, file))
             hash_me += str(size)
-            # hash_me += str(self.__retry_oserror(os.path.getsize, file))
 
         sub_directories = self.__retry_oserror(self.__get_sub_directories, directory)
         for sub_directory in sub_directories:
@@ -101,11 +98,12 @@ class DuplicateDirectoryFinder:
         print('Crawling:', current_directory)
 
 if __name__ == "__main__":
-    start_directory = "C:\\Users\\quakkels\\Pictures"
-    #start_directory = "C:\\Users\\quakkels\\books"
-
+    start_directory = sys.argv[1]
     ddf = DuplicateDirectoryFinder(start_directory)
-
     start = time.time()
-    dir_count, file_count, nothing = ddf.find_duplicates()
+    directories_count, files_count, folder_size, directory_hash = ddf.find_duplicates()
+    print(f"Directories Count: {directories_count}")
+    print(f"Files Count: {files_count}")
+    print(f"Folder Size: {folder_size}")
+    print(f"Directory Hash: {directory_hash}")
     end = time.time()

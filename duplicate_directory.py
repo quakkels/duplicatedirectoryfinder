@@ -4,7 +4,7 @@ import time
 import os
 import sys
 from openpyxl import Workbook
-import ddf
+import ddfcore as ddf
 
 # Get the current working directory (if supplied by user)
 cur_dir = ''
