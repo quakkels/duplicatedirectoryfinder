@@ -32,7 +32,6 @@ class DuplicateDirectoryFinder:
             folder_size += size
             hash_me += str(self.__retry_oserror(os.path.getmtime, file))
             hash_me += str(size)
-            # hash_me += str(self.__retry_oserror(os.path.getsize, file))
 
         sub_directories = self.__retry_oserror(self.__get_sub_directories, directory)
         for sub_directory in sub_directories:

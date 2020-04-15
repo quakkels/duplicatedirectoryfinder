@@ -5,6 +5,7 @@ import os
 import sys
 from openpyxl import Workbook
 import ddf
+from operator import itemgetter
 
 # Get the current working directory (if supplied by user)
 cur_dir = ''
@@ -52,7 +53,7 @@ ws['E1'] = 'Size of Directory'
 
 # Loop through the list of hashes and save the four parts of the tuple
 for a in range (0, len(finder.directory_hashes)):
-    hash, dir_name, num_sub_dirs, num_files, dir_size =  finder.directory_hashes[a]
+    hash, dir_name, num_sub_dirs, num_files, dir_size = finder.directory_hashes[a]
     ws['A' + str(a + 2)] = hash
     ws['B' + str(a + 2)] = dir_name
     ws['C' + str(a + 2)] = num_sub_dirs
@@ -71,17 +72,22 @@ ws['C1'] = 'Number of Subdirectories'
 ws['D1'] = 'Number of Files'
 ws['E1'] = 'Size of Directory'
 
-offset = 0
+dupes = []
+# Get all of the non-zero size duplicate folders
 for a in range (0, len(finder.found_duplicates)):
     dir1, dir2, num_dirs, num_files, dir_size =  finder.found_duplicates[a]
-    if num_files != 0:
-        ws['A' + str(a + 2 - offset)] = dir1
-        ws['B' + str(a + 2 - offset)] = dir2
-        ws['C' + str(a + 2 - offset)] = num_dirs
-        ws['D' + str(a + 2 - offset)] = num_files
-        ws['E' + str(a + 2 - offset)] = dir_size
-    else:
-        offset = offset + 1
+    if num_files != 0 and dir_size != 0:
+        dupes.append([dir1, dir2, num_dirs, num_files, dir_size])
+
+dupes = sorted(dupes, key=itemgetter(4), reverse = True)
+
+# Save the duplicate folders to the Excel file
+for a in range (0, len(dupes)):
+    ws['A' + str(a + 2)] = dupes[a][0]
+    ws['B' + str(a + 2)] = dupes[a][1]
+    ws['C' + str(a + 2)] = dupes[a][2]
+    ws['D' + str(a + 2)] = dupes[a][3]
+    ws['E' + str(a + 2)] = dupes[a][4]
 wb.save('Duplicate Folders ' + end_string + '.xlsx')
 
 print('Results saved as Folder Hashes ' + end_string + 
