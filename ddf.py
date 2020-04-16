@@ -5,12 +5,10 @@ import os
 
 class DuplicateDirectoryFinder:
 
-    start_directory = ""
-    directory_hashes = []
-    found_duplicates = []
-
     def __init__(self, start_directory):
         self.start_directory = start_directory
+        self.directory_hashes = []
+        self.found_duplicates = []
     
     def find_duplicates(self):
         # self.directory_total = self.__get_directory_total()

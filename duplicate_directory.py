@@ -8,7 +8,6 @@ import ddf
 from operator import itemgetter
 
 # Get the current working directory (if supplied by user)
-cur_dir = ''
 if len(sys.argv) > 2:
     print('Please put folder names with spaces inside of double quotes')
     sys.exit()
@@ -94,8 +93,4 @@ print('Results saved as Folder Hashes ' + end_string +
       '.xlsx and Duplicate Folders ' + end_string + '.xlsx')
 print()
 junk = input('Press Enter to exit the program')
-
-
-
-
 
