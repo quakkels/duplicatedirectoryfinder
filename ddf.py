@@ -68,14 +68,16 @@ class DuplicateDirectoryFinder:
     def __get_sub_directories(self, directory):
         sub_dirs = [] 
         for o in os.listdir(directory): 
-            if os.path.isdir(directory):
+            if os.path.isdir(os.path.join(directory,o)):
                 sub_dirs.append(os.path.join(directory,o))
         return sub_dirs
 
     def __get_files(self, directory):
-        return [os.path.join(directory, o) 
-            for o in os.listdir(directory) 
-                if os.path.isfile(os.path.join(directory,o))]
+        file_list = []
+        for o in os.listdir(directory):
+            if os.path.isfile(os.path.join(directory,o)):
+                file_list.append(os.path.join(directory, o))
+        return file_list     
 
     def __retry_oserror(self, func, *args):
         retry_count = 10
@@ -98,11 +100,11 @@ class DuplicateDirectoryFinder:
         print('Crawling:', current_directory)
 
 if __name__ == "__main__":
-    start_directory = "C:\\Users\\quakkels\\Pictures"
+    start_directory = "C:\\Users\\quakkels\\books"
     #start_directory = "C:\\Users\\quakkels\\books"
 
     ddf = DuplicateDirectoryFinder(start_directory)
 
     start = time.time()
-    dir_count, file_count, nothing = ddf.find_duplicates()
+    dir_count, file_count, dir_size, nothing = ddf.find_duplicates()
     end = time.time()
